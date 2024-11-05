@@ -1,0 +1,201 @@
+import requests
+
+def tic_tac_toe():
+    print("Okay i'll go first!")
+    games = "Tic Tac Toe"
+    TTT_Board = {1: ' ', 2: ' ', 3: ' ',
+         4: ' ', 5: ' ', 6: ' ',
+         7: ' ', 8: ' ', 9: ' '}
+    player = 'O'
+    computer = 'X'
+ 
+    def PrintBoard(TTT_Board):
+     print(TTT_Board[1] + '|' + TTT_Board[2] + '|' + TTT_Board[3])
+     print('-+-+-')
+     print(TTT_Board[4] + '|' + TTT_Board[5] + '|' + TTT_Board[6])
+     print('-+-+-')
+     print(TTT_Board[7] + '|' +TTT_Board[8] + '|' + TTT_Board[9])
+     print("\n")
+
+    PrintBoard(TTT_Board)
+
+
+    def SpaceFree(position):
+        if TTT_Board[position] == ' ':
+            return True
+        return False
+    
+ 
+    def InsertLetter(letter, position):
+        if SpaceFree(position):
+            TTT_Board[position] = letter
+            PrintBoard(TTT_Board)
+            if Draw():
+                print("Draw") 
+                
+            elif Win():
+                if letter == "X":
+                    print("I win!")
+                    
+                else: 
+                    print("You win!")
+                    
+            return        
+            
+        else:
+            print("someone already played there")
+            position = int(input("Please enter a new position: "))
+            InsertLetter(letter, position)
+            return
+
+    def Win():
+        if (TTT_Board[1] == TTT_Board[2] and TTT_Board[1] == TTT_Board[3] and TTT_Board[1] != ' '):
+            return True
+        elif (TTT_Board[4] == TTT_Board[5] and TTT_Board[4] == TTT_Board[6] and TTT_Board[4] != ' '):
+            return True
+        elif (TTT_Board[7] == TTT_Board[8] and TTT_Board[7] == TTT_Board[9] and TTT_Board[7] != ' '):
+         return True
+        elif (TTT_Board[1] == TTT_Board[4] and TTT_Board[1] == TTT_Board[7] and TTT_Board[1] != ' '):
+         return True
+        elif (TTT_Board[2] == TTT_Board[5] and TTT_Board[2] == TTT_Board[8] and TTT_Board[2] != ' '):
+          return True
+        elif (TTT_Board[3] == TTT_Board[6] and TTT_Board[3] == TTT_Board[9] and TTT_Board[3] != ' '):
+            return True
+        elif (TTT_Board[1] == TTT_Board[5] and TTT_Board[1] == TTT_Board[9] and TTT_Board[1] != ' '):
+            return True
+        elif (TTT_Board[7] == TTT_Board[5] and  TTT_Board[7] == TTT_Board[3] and TTT_Board[7] != ' '):
+            return True
+        else:
+            return False
+    
+    def checkWhichMarkWon(mark):
+        if (TTT_Board[1] == TTT_Board[2] and TTT_Board[1] == TTT_Board[3] and TTT_Board[1] == mark):
+            return True
+        elif (TTT_Board[4] == TTT_Board[5] and TTT_Board[4] == TTT_Board[6] and TTT_Board[4] == mark):
+            return True
+        elif (TTT_Board[7] == TTT_Board[8] and TTT_Board[7] == TTT_Board[9] and TTT_Board[7] == mark):
+            return True
+        elif (TTT_Board[1] == TTT_Board[4] and TTT_Board[1] == TTT_Board[7] and TTT_Board[1] == mark):
+         return True
+        elif (TTT_Board[2] == TTT_Board[5] and TTT_Board[2] == TTT_Board[8] and TTT_Board[2] == mark):
+            return True
+        elif (TTT_Board[3] == TTT_Board[6] and TTT_Board[3] == TTT_Board[9] and TTT_Board[3] == mark):
+            return True
+        elif (TTT_Board[1] == TTT_Board[5] and TTT_Board[1] == TTT_Board[9] and TTT_Board[1] == mark):
+            return True
+        elif (TTT_Board[7] == TTT_Board[5] and  TTT_Board[7] == TTT_Board[3] and TTT_Board[7] == mark):
+            return True
+        else:
+            return False
+    
+    def Draw():
+        for key in TTT_Board.keys():
+            if TTT_Board[key] == ' ':
+                return False
+        return True
+
+    def playerMove():
+        position = int(input("enter a position for 'O': " ))
+        InsertLetter(player, position)
+        return
+
+    def compMove():
+        bestScore = -800
+        bestMove = 0
+        for key in TTT_Board.keys():
+            if TTT_Board[key] == ' ':
+                TTT_Board[key] = computer
+                score = minimax(TTT_Board, False)
+                TTT_Board[key] = ' '
+                if score > bestScore:
+                    bestScore = score
+                    bestMove = key
+        InsertLetter(computer, bestMove)
+        return
+
+    def minimax(TTT_Board, isMaximizing):
+        if checkWhichMarkWon(computer):
+            return 1
+        elif checkWhichMarkWon(player):
+            return -1
+        elif Draw():
+            return 0
+    
+        if isMaximizing:
+            bestScore = -800
+            for key in TTT_Board.keys():
+                if TTT_Board[key] == ' ':
+                    TTT_Board[key] = computer
+                    score = minimax(TTT_Board, False)
+                    TTT_Board[key] = ' '
+                    if score > bestScore:
+                        bestScore = score
+            return bestScore
+        else:
+            bestScore = 800
+            for key in TTT_Board.keys():
+                if TTT_Board[key] == ' ':
+                    TTT_Board[key] = player
+                    score = minimax(TTT_Board, True)
+                    TTT_Board[key] = ' '
+                    if score < bestScore:
+                        bestScore = score
+            return bestScore
+
+
+    while not Win():
+        compMove()
+        playerMove()
+
+
+def get_weather():
+    # Ask the user for their location
+        location = input("Enter your location (city name or ZIP code): ")
+    
+    # OpenWeather API key and URL
+        api_key = '7436b3537f2f7d6c29a0f6dd58731ede'  
+        url = f"http://api.openweathermap.org/data/2.5/weather?q={location}&appid={api_key}&units=metric"
+
+    # Make the API request
+        response = requests.get(url)
+
+    # Check if the request was successful
+        if response.status_code == 200:
+            data = response.json()
+        # Extract weather data
+            temp = data['main']['temp']
+            weather = data['weather'][0]['description']
+            print(f"The temperature in {location} is {temp}°C with {weather}.")
+            x = input("What would you like to do? ")
+        else:
+            print("Could not retrieve weather data. Please check your location or try again.")
+
+    # Call the function
+
+def main():
+    password = input("Password: ")
+    if password != "Joshua":
+        print("Incorrect password")
+        return  # End program if password is incorrect
+
+    while True:
+        x = input("\nWhat would you like to do?: ").strip().upper()
+
+        if x == "help":
+            print("Here is a list of what you could do:\n T - Tic Tac Toe\n W - Weather\n Q - Quit")
+
+        elif x == "T":
+            tic_tac_toe()
+        
+        elif x == "W":
+            get_weather()
+        
+        elif x == "Q":
+            print("Goodbye!")
+            break
+        
+        else:
+            print("Invalid input. Type 'help' to see options.")
+
+# Start the program
+main()
