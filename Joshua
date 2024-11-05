@@ -170,7 +170,7 @@ def get_weather():
         else:
             print("Could not retrieve weather data. Please check your location or try again.")
 
-    # Call the function
+    
 
 def main():
     password = input("Password: ")
